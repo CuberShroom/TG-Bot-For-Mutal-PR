@@ -34,36 +34,35 @@ from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetHistoryRequest
 from telethon.tl.types import PeerChannel
 import tempfile
-from telethon.sessions import StringSession  # Добавить в начало с другими импортами
+from telethon.sessions import StringSession  
 
-# В начале файла добавляем константы
 api_id = ""
 api_hash = ""
-TOKEN = "7859103520:AAGAXZdFen9ffp7XOlBUy4x4cFphsaDBTw4"
-USER_PHONE = "+7"  # Замените на реальный номер телефона
-ADMIN_CHAT_ID = 1234567  # Замените на ваш ID чата
+TOKEN = ""
+USER_PHONE = "+7"  
+ADMIN_CHAT_ID = 1234567  
 db_name = "PR_Data_.db"  
 
-# Глобальные переменные
+
 client = None
 db_lock = asyncio.Lock()
 flood_wait_until = None
 
-# Остальные глобальные переменные
+
 dates = ''                                              
 ID_Chan = ''
 description = ''
 
-# Создание таблицы при запуске
+
 def init_db():
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
     
-    # Проверяем существующие колонки
+    
     c.execute("PRAGMA table_info(data)")
     columns = [column[1] for column in c.fetchall()]
     
-    # Создаем таблицу, если её нет
+   
     c.execute("""
         CREATE TABLE IF NOT EXISTS data (
             ID_Chan TEXT PRIMARY KEY,
@@ -75,7 +74,7 @@ def init_db():
         )
     """)
     
-    # Добавляем недостающие колонки
+   
     if 'message_id' not in columns:
         c.execute("ALTER TABLE data ADD COLUMN message_id INTEGER")
     if 'chat_id' not in columns:
@@ -86,7 +85,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Вызываем функцию для создания новой структуры БД
+
 init_db()
 
 # Контекстный менеджер для работы с БД
@@ -98,7 +97,7 @@ async def get_db():
     finally:
         conn.close()
 
-# Добавьте в начало файла после импортов
+
 class TelegramClientSingleton:
     _instance = None
     _client = None
@@ -137,7 +136,7 @@ async def cleanup_old_sessions():
     except Exception as e:
         logging.error(f"Ошибка при очистке старых сессий: {e}")
 
-# Функция для очистки URL канала
+
 def clean_channel_url(channel_url: str) -> str:
     """Очищает URL канала от лишних элементов"""
     if not channel_url:
